@@ -8,7 +8,7 @@
 Summary:    Xorg X11 libinput input driver
 Name:       xorg-x11-drv-libinput
 Version:    1.0.1
-Release:    3%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
+Release:    4%{?gitdate:.%{gitdate}git%{gitversion}}%{?dist}
 URL:        http://www.x.org
 License:    MIT
 
@@ -22,6 +22,7 @@ Source1:    71-libinput-overrides-wacom.conf
 # Fedora-only hack for hidpi screens
 # https://bugzilla.redhat.com/show_bug.cgi?id=1413306
 Patch01:    0001-Add-a-DPIScaleFactor-option-as-temporary-solution-to.patch
+Patch02:    0001-Map-some-specific-high-keycodes-into-the-FK20-23-ran.patch
 
 BuildRequires: make
 BuildRequires: autoconf automake libtool
@@ -78,6 +79,9 @@ Xorg X11 libinput input driver development files.
 %{_includedir}/xorg/libinput-properties.h
 
 %changelog
+* Fri Mar 21 2025 Peter Hutterer <peter.hutterer@redhat.com> - 1.0.1-4
+- Map some high keycodes into the FK20-FK23 range (RHEL-84833)
+
 * Tue Aug 10 2021 Mohan Boddu <mboddu@redhat.com> - 1.0.1-3
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688

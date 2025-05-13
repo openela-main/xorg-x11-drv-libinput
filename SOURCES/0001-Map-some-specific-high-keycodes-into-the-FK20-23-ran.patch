@@ -1,0 +1,44 @@
+From f8b62da441571afd5003fd66167bf03798f19ed6 Mon Sep 17 00:00:00 2001
+From: Peter Hutterer <peter.hutterer@who-t.net>
+Date: Wed, 9 Oct 2024 14:03:41 +1000
+Subject: [PATCH xf86-input-libinput] Map some specific high keycodes into the
+ FK20-23 range
+
+These mappings have been part of xkeyboard-config for over a decade and
+the likely reason they were introduced is that the corresponding evdev
+keycode is > 255.
+
+Let's forcibly remap those in the driver here so the rest of the system
+can switch to the real keycodes instead of having to map them to the
+whatever X expects.
+
+See https://github.com/systemd/systemd/pull/34325/
+
+Part-of: <https://gitlab.freedesktop.org/xorg/driver/xf86-input-libinput/-/merge_requests/62>
+(cherry picked from commit cb80d7f82d35f8068e06d45860ed958a948e15bf)
+---
+ src/xf86libinput.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/xf86libinput.c b/src/xf86libinput.c
+index 7aebacf7501e..97b08213951c 100644
+--- a/src/xf86libinput.c
++++ b/src/xf86libinput.c
+@@ -1522,6 +1522,14 @@ xf86libinput_handle_key(InputInfoPtr pInfo, struct libinput_event_keyboard *even
+ 	if ((driver_data->capabilities & CAP_KEYBOARD) == 0)
+ 		return;
+ 
++	/* keycodes > 256 that have a historical mapping in xkeyboard-config */
++	switch (key) {
++	case KEY_TOUCHPAD_TOGGLE: key = KEY_F21; break;
++	case KEY_TOUCHPAD_ON:     key = KEY_F22; break;
++	case KEY_TOUCHPAD_OFF:    key = KEY_F23; break;
++	case KEY_MICMUTE:         key = KEY_F20; break;
++	}
++
+ 	key += XORG_KEYCODE_OFFSET;
+ 
+ 	is_press = (libinput_event_keyboard_get_key_state(event) == LIBINPUT_KEY_STATE_PRESSED);
+-- 
+2.49.0
+
